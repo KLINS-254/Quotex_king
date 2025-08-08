@@ -1,0 +1,24 @@
+{
+  "name": "quotex_king",
+  "version": "1.0.0",
+  "description": "Real-time Quotex market analysis with smart strategies and indicators",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "keywords": [
+    "quotex",
+    "signals",
+    "binary options",
+    "real-time trading",
+    "nextjs"
+  ],
+  "author": "Papa",
+  "license": "MIT",
+  "dependencies": {
+    "next": "^14.2.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
