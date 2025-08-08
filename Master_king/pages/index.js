@@ -1,36 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
-  const [signals, setSignals] = useState([]);
+  const [signal, setSignal] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSignals = async () => {
-      const res = await fetch('/api/getSignal');
-      const data = await res.json();
-      setSignals(data);
-    };
-
-    fetchSignals();
-    const interval = setInterval(fetchSignals, 60000); // Update every 60 seconds
-    return () => clearInterval(interval);
+    fetch('/api/getSignal')
+      .then(res => res.json())
+      .then(data => {
+        setSignal(data);
+        setLoading(false);
+      });
   }, []);
 
   return (
-    <div className="min-h-screen bg-black text-white p-4">
-      <h1 className="text-4xl font-bold mb-6 text-center">🔮 Quotex Prophet Dashboard</h1>
+    <div style={{
+      fontFamily: 'Arial, sans-serif',
+      padding: '2rem',
+      background: '#0f0f0f',
+      color: '#ffffff',
+      minHeight: '100vh'
+    }}>
+      <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>
+        🔮 Quotex Prophet Dashboard
+      </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {signals.map((signal, i) => (
-          <div key={i} className="bg-zinc-800 border border-zinc-700 p-4 rounded-xl shadow-md">
-            <h2 className="text-xl font-bold">{signal.asset} | {signal.timeframe}</h2>
-            <p className="text-lg">📈 Signal: <strong>{signal.direction}</strong></p>
-            <p>🧠 Confidence: {signal.confidence}%</p>
-            <p>📊 Pattern: {signal.pattern}</p>
-            <p>📍 Reason: {signal.reason.join(', ')}</p>
-            <p>⏱️ Valid: {signal.validUntil}</p>
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <p>⏳ Loading real-time signals...</p>
+      ) : (
+        <>
+          <h2>📈 Asset: {signal.asset}</h2>
+          <p>🕐 Timeframe: {signal.timeframe}</p>
+          <p>📊 Direction: <strong>{signal.direction}</strong></p>
+          <p>📡 Confidence: {signal.confidence}%</p>
+        </>
+      )}
     </div>
   );
 }
