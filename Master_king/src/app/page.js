@@ -5,6 +5,8 @@ import { format } from 'date-fns';
 export default function HomePage() {
   const [signal, setSignal] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
   const fetchSignal = async () => {
     setLoading(true);
     try {
@@ -24,8 +26,12 @@ export default function HomePage() {
 
   useEffect(() => {
     fetchSignal();
-    const interval = setInterval(fetchSignal, 60000);
-    return () => clearInterval(interval);
+    const signalInterval = setInterval(fetchSignal, 60000);
+    const clockInterval = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => {
+      clearInterval(signalInterval);
+      clearInterval(clockInterval);
+    };
   }, []);
 
   if (loading || !signal) {
@@ -53,10 +59,13 @@ export default function HomePage() {
           **Signal valid until:** {format(signal.expiryTime, 'HH:mm:ss')}
         </p>
         <p style={{ opacity: '0.7', fontSize: '0.9rem', marginTop: '2rem' }}>
+          Current time: {format(currentTime, 'HH:mm:ss')}
+        </p>
+        <p style={{ opacity: '0.7', fontSize: '0.9rem' }}>
           **Note:** This is a simulated signal for educational purposes. Do not use for actual trading.
         </p>
       </div>
     </div>
   );
-                 }
-    
+          }
+          
