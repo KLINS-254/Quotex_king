@@ -1,30 +1,44 @@
-// pages/index.js
+// app/page.js (acts as index.js in App Router)
 
-import { useState } from 'react'; import { analyzeMarket } from '@/utils/analyzeStrategies';
+'use client';
 
-export default function Home() { const [loading, setLoading] = useState(false); const [result, setResult] = useState(null);
+import { useState } from 'react'; import { analyzeMarket } from '../utils/analyzeStrategies';
 
-const handleAnalyze = async () => { setLoading(true); const analysis = await analyzeMarket(); setResult(analysis[0]); setLoading(false); };
+export default function Home() { const [analysis, setAnalysis] = useState(null); const [loading, setLoading] = useState(false); const [error, setError] = useState(null);
 
-return ( <main className="min-h-screen flex flex-col items-center justify-center p-4"> <h1 className="text-3xl font-bold mb-6">🔮 Quotex Prophet Dashboard</h1>
+const handleAnalyze = async () => { setLoading(true); setError(null); try { const results = await analyzeMarket(); if (results.length === 0) { setError('No market data available.'); setAnalysis(null); } else { setAnalysis(results[0]); } } catch (err) { console.error('Analysis failed:', err); setError('Failed to analyze market.'); setAnalysis(null); } setLoading(false); };
 
-<button
-    onClick={handleAnalyze}
-    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl mb-6"
-    disabled={loading}
-  >
-    {loading ? 'Analyzing...' : '🔍 Analyse'}
-  </button>
+return ( <div style={{ padding: '2rem', fontFamily: 'Arial, sans-serif' }}> <h1>🔮 Quotex Prophet Dashboard</h1> <button onClick={handleAnalyze} style={{ padding: '10px 20px', fontSize: '1rem', backgroundColor: '#0070f3', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', marginTop: '1rem', }} > 🔁 Run Signal Analysis </button>
 
-  {result && (
-    <div className="text-center border p-6 rounded-xl shadow-xl">
-      <p className="text-xl font-medium">📈 Asset: {result.pair}</p>
-      <p className="text-lg">🕐 Timeframe: 1m</p>
-      <p className="text-lg">📊 Direction: {result.signals.rsi.signal}</p>
-      <p className="text-lg">📡 Confidence: {result.score * 10}%</p>
+{loading && <p style={{ marginTop: '1rem' }}>⏳ Analyzing...</p>}
+
+  {error && <p style={{ marginTop: '1rem', color: 'red' }}>❌ {error}</p>}
+
+  {analysis && (
+    <div style={{
+      marginTop: '2rem',
+      padding: '1.5rem',
+      border: '1px solid #ccc',
+      borderRadius: '8px',
+      background: '#f9f9f9',
+    }}>
+      <h2>📈 Asset: {analysis.pair}</h2>
+      <p>🕐 Timeframe: 1m</p>
+      <p>📊 Direction: {analysis.signals.rsi.signal}</p>
+      <p>📡 Confidence: {analysis.score * 10}%</p>
+
+      <h3>📍 Signal Breakdown:</h3>
+      <ul>
+        <li>RSI: {analysis.signals.rsi.signal}</li>
+        <li>MACD: {analysis.signals.macd.signal}</li>
+        <li>EMA: {analysis.signals.ema.signal}</li>
+        <li>Bollinger Bands: {analysis.signals.bb.signal}</li>
+        <li>Patterns: {analysis.signals.patterns.map(p => p.name).join(', ') || 'None'}</li>
+      </ul>
     </div>
   )}
-</main>
+</div>
 
 ); }
 
+      
