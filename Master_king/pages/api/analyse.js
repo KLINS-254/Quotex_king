@@ -1,6 +1,7 @@
 // pages/api/analyse.js
 
-import { detectAllPatterns } from '@/utils/patterns'
+import { detectPatterns } from '../../utils/patterns';
+import { computeIndicators } from '../../utils/indicators';
 import { calculateIndicators } from '@/utils/indicators'
 
 const mockAssets = ['AUDUSD', 'EURUSD', 'GBPJPY', 'USDJPY']
