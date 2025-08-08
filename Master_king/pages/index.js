@@ -1,44 +1,57 @@
-// app/page.js (or src/app/page.js depending on structure)
+// app/page.js (or index.js)
 
 'use client';
+import React, { useState } from 'react';
+import { analyzeMarket } from '@/utils/analyzeStrategies';
 
-import { useState } from 'react'; import { analyzeMarket } from '@/utils/analyzeStrategies';
+export default function Dashboard() {
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-export default function Home() { const [results, setResults] = useState([]); const [loading, setLoading] = useState(false); const [error, setError] = useState(null);
+  const handleRunAnalysis = async () => {
+    setLoading(true);
+    const data = await analyzeMarket(); // Analyze all pairs
+    setResults(data);
+    setLoading(false);
+  };
 
-const handleAnalyze = async () => { setLoading(true); setError(null); try { const analysis = await analyzeMarket(); setResults(analysis); } catch (err) { setError('Failed to fetch analysis.'); console.error(err); } finally { setLoading(false); } };
+  return (
+    <div className="min-h-screen bg-gray-100 p-6">
+      <h1 className="text-3xl font-bold mb-6">🔮 Quotex Prophet Dashboard</h1>
+      <button
+        onClick={handleRunAnalysis}
+        disabled={loading}
+        className="mb-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded"
+      >
+        {loading ? 'Analyzing...' : '🔁 Run Signal Analysis'}
+      </button>
 
-return ( <main className="min-h-screen bg-gray-100 py-10 px-6"> <h1 className="text-3xl font-bold mb-6 text-center">🔮 Quotex Prophet Dashboard</h1>
+      {results.length === 0 && !loading && (
+        <p className="text-gray-600">Click the button above to run analysis.</p>
+      )}
 
-<div className="flex justify-center mb-6">
-    <button
-      onClick={handleAnalyze}
-      className="bg-indigo-600 text-white px-6 py-2 rounded-lg shadow hover:bg-indigo-700"
-    >
-      🔁 Run Signal Analysis
-    </button>
-  </div>
-
-  {loading && <p className="text-center text-blue-500">Running analysis...</p>}
-  {error && <p className="text-center text-red-500">{error}</p>}
-
-  {results.length > 0 && (
-    <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-      {results.map((item, index) => (
+      {results.map((res, idx) => (
         <div
-          key={item.pair + index}
-          className="bg-white p-4 rounded-lg shadow"
+          key={idx}
+          className="bg-white p-4 mb-4 shadow-md rounded-lg border-l-4 border-blue-500"
         >
-          <h2 className="text-xl font-semibold mb-2">📈 Asset: {item.pair}</h2>
-          <p>🕐 Timeframe: 1m</p>
-          <p>📊 Direction: {item.signals.rsi?.signal || 'WAIT'}</p>
-          <p>📡 Confidence: {item.score * 10}%</p>
-          <p className="mt-2 text-sm text-gray-600">Patterns: {item.signals.patterns?.map(p => p.name).join(', ') || 'None'}</p>
+          <h2 className="text-xl font-semibold mb-1">📈 Asset: {res.pair}</h2>
+          <p className="text-gray-600">🕐 Timeframe: 1m</p>
+          <p className="text-lg mt-2">
+            📊 Direction: {res.signals?.rsi?.signal || 'N/A'}
+          </p>
+          <p>📡 Confidence: {res.score * 10}%</p>
+
+          <div className="mt-2">
+            🧠 Patterns Detected:
+            <ul className="list-disc ml-6">
+              {res.signals?.patterns?.map((p, i) => (
+                <li key={i}>{p.name} ({p.signal})</li>
+              ))}
+            </ul>
+          </div>
         </div>
       ))}
     </div>
-  )}
-</main>
-
-); }
-
+  );
+}
