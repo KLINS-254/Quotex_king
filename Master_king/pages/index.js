@@ -2,7 +2,7 @@
 
 'use client';
 import React, { useState } from 'react';
-import { analyzeMarket } from '@/utils/analyzeStrategies';
+import { analyzeMarket } from '../utils/analyzeStrategies';
 
 export default function Dashboard() {
   const [results, setResults] = useState([]);
