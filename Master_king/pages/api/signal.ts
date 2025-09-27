@@ -7,8 +7,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     // Example using Alpha Vantage (replace YOUR_KEY with .env.local)
     const response = await fetch(
-      `https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol=EUR&to_symbol=USD&interval=1min&apikey=${process.env.ALPHA_VANTAGE_KEY}`
-    );
+  `https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol=EUR&to_symbol=USD&interval=1min&apikey=${process.env.ALPHA_VANTAGE_KEY}`
+);
     const raw = await response.json();
 
     // Format candles (simplified for demo)
