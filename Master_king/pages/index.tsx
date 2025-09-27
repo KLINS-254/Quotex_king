@@ -4,22 +4,22 @@ export default function Home() {
   const [signal, setSignal] = useState<any>(null);
 
   useEffect(() => {
-    fetch("/api/signal?symbol=EURUSD")
+    fetch("/api/signal?symbol=AUDUSD") // Change symbol here
       .then((res) => res.json())
       .then((data) => setSignal(data));
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
-      <h1 className="text-3xl font-bold mb-6">📊 Quotex Signal</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-6">
+      <h1 className="text-3xl font-bold mb-6">💎 Quotex Prophet Dashboard 💎</h1>
 
       {signal ? (
-        <div className="p-6 bg-gray-800 rounded-xl shadow-md w-80 text-center">
-          <h2 className="text-2xl mb-2">{signal.signal}</h2>
-          <p className="text-lg">Confidence: {signal.confidence}%</p>
-          <div className="mt-4 text-sm text-gray-400">
-            <pre>{JSON.stringify(signal.indicators, null, 2)}</pre>
-          </div>
+        <div className="p-6 bg-gray-800 rounded-2xl shadow-xl w-96 text-center">
+          <p className="text-lg">📈 Asset: AUDUSD</p>
+          <p className="text-lg">🕐 Timeframe: 1m</p>
+
+          <h2 className="text-2xl mt-4 mb-2">📊 Direction: {signal.signal}</h2>
+          <p className="text-xl">📡 Confidence: {signal.confidence}%</p>
         </div>
       ) : (
         <p>Loading market signal...</p>
